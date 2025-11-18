@@ -25,20 +25,42 @@ test.describe('Checkout Tests', () => {
     
     await expect(page.locator('.complete-header')).toHaveText('Thank you for your order!');
   });
-
 });
 
+// Nakula's test - empty cart validation
 test('should not allow checkout with empty cart', async ({ page }) => {
   await page.goto('https://www.saucedemo.com/');
   await page.fill('#user-name', 'standard_user');
   await page.fill('#password', 'secret_sauce');
   await page.click('#login-button');
   
-  // Go to cart without adding items
   await page.goto('https://www.saucedemo.com/cart.html');
   
   const cartItems = page.locator('.cart_item');
   await expect(cartItems).toHaveCount(0);
+});
+
+// Sahadeva's test - multiple items checkout
+test('should checkout with multiple items successfully', async ({ page }) => {
+  await page.goto('https://www.saucedemo.com/');
+  await page.fill('#user-name', 'standard_user');
+  await page.fill('#password', 'secret_sauce');
+  await page.click('#login-button');
   
-  console.log('Empty cart validation: Cart has 0 items');
+  await page.click('[data-test="add-to-cart-sauce-labs-backpack"]');
+  await page.click('[data-test="add-to-cart-sauce-labs-bike-light"]');
+  
+  await page.click('.shopping_cart_link');
+  
+  const cartItems = page.locator('.cart_item');
+  await expect(cartItems).toHaveCount(2);
+  
+  await page.click('[data-test="checkout"]');
+  await page.fill('[data-test="firstName"]', 'Jane');
+  await page.fill('[data-test="lastName"]', 'Smith');
+  await page.fill('[data-test="postalCode"]', '54321');
+  await page.click('[data-test="continue"]');
+  await page.click('[data-test="finish"]');
+  
+  await expect(page.locator('.complete-header')).toHaveText('Thank you for your order!');
 });
