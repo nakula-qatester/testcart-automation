@@ -27,13 +27,26 @@ test.describe('Checkout Tests', () => {
   });
 });
 
+// Nakula's test - empty cart validation
+test('should not allow checkout with empty cart', async ({ page }) => {
+  await page.goto('https://www.saucedemo.com/');
+  await page.fill('#user-name', 'standard_user');
+  await page.fill('#password', 'secret_sauce');
+  await page.click('#login-button');
+  
+  await page.goto('https://www.saucedemo.com/cart.html');
+  
+  const cartItems = page.locator('.cart_item');
+  await expect(cartItems).toHaveCount(0);
+});
+
+// Sahadeva's test - multiple items checkout
 test('should checkout with multiple items successfully', async ({ page }) => {
   await page.goto('https://www.saucedemo.com/');
   await page.fill('#user-name', 'standard_user');
   await page.fill('#password', 'secret_sauce');
   await page.click('#login-button');
   
-  // Add 2 products
   await page.click('[data-test="add-to-cart-sauce-labs-backpack"]');
   await page.click('[data-test="add-to-cart-sauce-labs-bike-light"]');
   
